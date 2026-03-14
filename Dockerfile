@@ -11,3 +11,4 @@ RUN chmod +x /usr/local/bin/cb-redis-dokploy-entrypoint
 
 USER odoo
 COPY --chown=odoo:odoo addons/cb_redis /mnt/addons/custom/cb_redis
+COPY --chown=odoo:odoo addons/cb_redis /mnt/extra-addons/cb_redis
