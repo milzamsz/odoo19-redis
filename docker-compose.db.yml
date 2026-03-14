@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${ODOO_DB_NAME:-odoo_prod}
+      POSTGRES_USER: ${ODOO_DB_USER:-odoo}
+      POSTGRES_PASSWORD: ${ODOO_DB_PASSWORD:-change-me-db-password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${ODOO_DB_USER:-odoo} -d ${ODOO_DB_NAME:-odoo_prod}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:

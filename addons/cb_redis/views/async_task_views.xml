@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================
+         cb.async.task — List View
+         ============================================================ -->
+
+    <record id="view_cb_async_task_list" model="ir.ui.view">
+        <field name="name">cb.async.task.list</field>
+        <field name="model">cb.async.task</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="state == 'failed'"
+                  decoration-muted="state == 'cancelled'"
+                  decoration-success="state == 'done'"
+                  decoration-info="state == 'running'"
+                  default_order="date_queued desc">
+                <field name="id" string="ID"/>
+                <field name="model_name"/>
+                <field name="method_name"/>
+                <field name="channel_id"/>
+                <field name="state"
+                       widget="badge"
+                       decoration-danger="state == 'failed'"
+                       decoration-success="state == 'done'"
+                       decoration-info="state in ('queued', 'running')"
+                       decoration-warning="state == 'pending'"
+                       decoration-muted="state == 'cancelled'"/>
+                <field name="retry_count" string="Retries"/>
+                <field name="date_queued"/>
+                <field name="date_done"/>
+                <field name="duration" widget="float_time" string="Duration"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         cb.async.task — Form View
+         ============================================================ -->
+
+    <record id="view_cb_async_task_form" model="ir.ui.view">
+        <field name="name">cb.async.task.form</field>
+        <field name="model">cb.async.task</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_dispatch"
+                            type="object"
+                            string="Dispatch"
+                            class="btn-primary"
+                            invisible="state not in ('pending', 'failed')"/>
+                    <button name="action_retry"
+                            type="object"
+                            string="Retry"
+                            class="btn-warning"
+                            invisible="state != 'failed'"/>
+                    <button name="action_cancel"
+                            type="object"
+                            string="Cancel"
+                            invisible="state not in ('pending', 'queued', 'failed')"/>
+                    <button name="action_requeue"
+                            type="object"
+                            string="Re-queue"
+                            invisible="state not in ('done', 'cancelled')"/>
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="pending,queued,running,done,failed,cancelled"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="display_name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Target">
+                            <field name="model_name"/>
+                            <field name="method_name"/>
+                            <field name="record_ids"/>
+                            <field name="channel_id"/>
+                            <field name="requested_by_user_id"/>
+                        </group>
+                        <group string="Policy">
+                            <field name="max_retries"/>
+                            <field name="retry_count"/>
+                            <field name="retry_delay"/>
+                            <field name="date_next_attempt"/>
+                            <field name="priority"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Arguments" name="page_args">
+                            <group>
+                                <field name="args_json"/>
+                                <field name="kwargs_json"/>
+                            </group>
+                        </page>
+                        <page string="Result" name="page_result">
+                            <group>
+                                <field name="result_json"/>
+                                <field name="error_message"
+                                       invisible="not error_message"/>
+                                <field name="traceback_text"
+                                       invisible="not traceback_text"
+                                       widget="text"/>
+                            </group>
+                        </page>
+                        <page string="Chaining" name="page_chain">
+                            <group>
+                                <field name="parent_task_id"/>
+                                <field name="next_task_id"/>
+                            </group>
+                        </page>
+                        <page string="Metadata" name="page_meta">
+                            <group>
+                                <group>
+                                    <field name="stream_message_id"/>
+                                    <field name="date_queued"/>
+                                </group>
+                                <group>
+                                    <field name="date_started"/>
+                                    <field name="date_done"/>
+                                    <field name="duration" widget="float_time"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Logs" name="page_logs">
+                            <field name="log_ids" readonly="1">
+                                <list>
+                                    <field name="create_date" string="Time"/>
+                                    <field name="level"
+                                           widget="badge"
+                                           decoration-danger="level == 'error'"
+                                           decoration-warning="level == 'warning'"
+                                           decoration-info="level == 'info'"/>
+                                    <field name="message"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         cb.async.task — Search View
+         ============================================================ -->
+
+    <record id="view_cb_async_task_search" model="ir.ui.view">
+        <field name="name">cb.async.task.search</field>
+        <field name="model">cb.async.task</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="model_name"/>
+                <field name="method_name"/>
+                <field name="channel_id"/>
+                <filter name="filter_pending" string="Pending"
+                        domain="[('state', '=', 'pending')]"/>
+                <filter name="filter_queued" string="Queued"
+                        domain="[('state', '=', 'queued')]"/>
+                <filter name="filter_running" string="Running"
+                        domain="[('state', '=', 'running')]"/>
+                <filter name="filter_done" string="Done"
+                        domain="[('state', '=', 'done')]"/>
+                <filter name="filter_failed" string="Failed"
+                        domain="[('state', '=', 'failed')]"/>
+                <separator/>
+                <filter name="filter_active" string="Active (not cancelled)"
+                        domain="[('state', '!=', 'cancelled')]"/>
+                <group>
+                    <filter name="group_state" string="State"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_channel" string="Channel"
+                            context="{'group_by': 'channel_id'}"/>
+                    <filter name="group_model" string="Model"
+                            context="{'group_by': 'model_name'}"/>
+                    <filter name="group_date_queued" string="Date Queued"
+                            context="{'group_by': 'date_queued:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         cb.async.task — Action
+         ============================================================ -->
+
+    <record id="action_cb_async_task" model="ir.actions.act_window">
+        <field name="name">Async Tasks</field>
+        <field name="res_model">cb.async.task</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_cb_async_task_search"/>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No async tasks yet
+            </p>
+            <p>
+                Tasks are created when you use the <code>.delayable()</code>
+                API or dispatch jobs programmatically. They are processed by
+                the external Redis Streams worker.
+            </p>
+        </field>
+    </record>
+
+</odoo>

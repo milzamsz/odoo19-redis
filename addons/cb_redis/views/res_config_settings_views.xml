@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_inherit_cb_redis"
+            model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.cb_redis</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='general_settings']" position="inside">
+
+                <block title="Redis Session Store"
+                       name="cb_redis_setting_container">
+
+                    <setting id="cb_redis_enable_setting"
+                             string="Redis Session Store"
+                             help="Use Redis to store HTTP sessions instead of the filesystem. Required for multi-server and containerized deployments.">
+                        <field name="cb_redis_enable"/>
+
+                        <div class="content-group"
+                             invisible="not cb_redis_enable">
+
+                            <!-- URL (overrides individual params) -->
+                            <div class="row mt16">
+                                <label for="cb_redis_url"
+                                       class="col-3 col-lg-3 o_light_label"/>
+                                <field name="cb_redis_url"
+                                       class="col-9 col-lg-9"
+                                       placeholder="redis://:password@host:6379/1"/>
+                            </div>
+                            <div class="mt4 ms-3 text-muted small">
+                                If URL is set, it overrides Host, Port, Password, and DB Index below.
+                            </div>
+
+                            <!-- Individual connection params -->
+                            <div class="row mt16">
+                                <label for="cb_redis_host"
+                                       class="col-3 col-lg-3 o_light_label"/>
+                                <field name="cb_redis_host"
+                                       class="col-9 col-lg-6"
+                                       placeholder="localhost"/>
+                            </div>
+                            <div class="row mt8">
+                                <label for="cb_redis_port"
+                                       class="col-3 col-lg-3 o_light_label"/>
+                                <field name="cb_redis_port"
+                                       class="col-9 col-lg-3"
+                                       placeholder="6379"/>
+                            </div>
+                            <div class="row mt8">
+                                <label for="cb_redis_password"
+                                       class="col-3 col-lg-3 o_light_label"/>
+                                <field name="cb_redis_password"
+                                       class="col-9 col-lg-6"
+                                       password="True"/>
+                            </div>
+                            <div class="row mt8">
+                                <label for="cb_redis_db_index"
+                                       class="col-3 col-lg-3 o_light_label"/>
+                                <field name="cb_redis_db_index"
+                                       class="col-9 col-lg-3"
+                                       placeholder="1"/>
+                            </div>
+
+                            <!-- Advanced settings -->
+                            <div class="row mt16">
+                                <label for="cb_redis_key_prefix"
+                                       class="col-3 col-lg-3 o_light_label"/>
+                                <field name="cb_redis_key_prefix"
+                                       class="col-9 col-lg-6"
+                                       placeholder="odoo:session:"/>
+                            </div>
+                            <div class="row mt8">
+                                <label for="cb_redis_session_ttl"
+                                       class="col-3 col-lg-3 o_light_label"/>
+                                <field name="cb_redis_session_ttl"
+                                       class="col-9 col-lg-3"/>
+                            </div>
+                            <div class="row mt8">
+                                <label for="cb_redis_ssl"
+                                       class="col-3 col-lg-3 o_light_label"/>
+                                <field name="cb_redis_ssl"/>
+                            </div>
+
+                            <!-- Test connection button -->
+                            <div class="mt16">
+                                <button name="cb_redis_test_connection"
+                                        type="object"
+                                        string="Test Connection"
+                                        class="btn-primary"
+                                        icon="fa-plug"/>
+                            </div>
+
+                        </div>
+                    </setting>
+
+                </block>
+
+                <block title="Redis Async Broker"
+                       name="cb_redis_broker_container">
+
+                    <setting id="cb_redis_broker_enable_setting"
+                             string="Async Broker (Redis Streams)"
+                             help="Use Redis Streams as an async message broker for heavy background jobs. Requires an external worker process.">
+                        <field name="cb_redis_broker_enable"/>
+
+                        <div class="content-group"
+                             invisible="not cb_redis_broker_enable">
+
+                            <div class="row mt16">
+                                <label for="cb_redis_stream_prefix"
+                                       class="col-3 col-lg-3 o_light_label"/>
+                                <field name="cb_redis_stream_prefix"
+                                       class="col-9 col-lg-3"
+                                       placeholder="cb"/>
+                            </div>
+                            <div class="mt4 ms-3 text-muted small">
+                                Stream keys are computed as &lt;prefix&gt;:&lt;channel_code&gt; (e.g. cb:jobs:high).
+                            </div>
+
+                        </div>
+                    </setting>
+
+                </block>
+
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

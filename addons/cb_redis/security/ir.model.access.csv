@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_cb_async_channel_user,cb.async.channel.user,model_cb_async_channel,base.group_user,1,0,0,0
+access_cb_async_channel_admin,cb.async.channel.admin,model_cb_async_channel,base.group_system,1,1,1,1
+access_cb_async_task_user,cb.async.task.user,model_cb_async_task,base.group_user,0,0,0,0
+access_cb_async_task_admin,cb.async.task.admin,model_cb_async_task,base.group_system,1,1,1,1
+access_cb_async_task_log_user,cb.async.task.log.user,model_cb_async_task_log,base.group_user,0,0,0,0
+access_cb_async_task_log_admin,cb.async.task.log.admin,model_cb_async_task_log,base.group_system,1,1,1,1

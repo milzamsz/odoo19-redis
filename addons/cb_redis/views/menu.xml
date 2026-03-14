@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================
+         Top-level menu: Redis Broker
+         ============================================================ -->
+
+    <menuitem id="menu_cb_redis_root"
+              name="Redis Broker"
+              web_icon="cb_redis,static/description/icon.png"
+              groups="base.group_system"
+              sequence="300"/>
+
+    <!-- Async Tasks -->
+    <menuitem id="menu_cb_async_task"
+              name="Async Tasks"
+              parent="menu_cb_redis_root"
+              action="action_cb_async_task"
+              sequence="10"/>
+
+    <!-- Channels (Configuration) -->
+    <menuitem id="menu_cb_async_channel"
+              name="Channels"
+              parent="menu_cb_redis_root"
+              action="action_cb_async_channel"
+              sequence="20"/>
+
+</odoo>

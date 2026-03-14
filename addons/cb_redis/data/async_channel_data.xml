@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- ============================================================
+         Default Async Channels (Priority Queues)
+         ============================================================ -->
+
+    <record id="async_channel_jobs" model="cb.async.channel">
+        <field name="name">Default (Normal)</field>
+        <field name="code">jobs</field>
+        <field name="priority">10</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <record id="async_channel_high" model="cb.async.channel">
+        <field name="name">High Priority</field>
+        <field name="code">jobs:high</field>
+        <field name="priority">5</field>
+        <field name="sequence">5</field>
+    </record>
+
+    <record id="async_channel_io" model="cb.async.channel">
+        <field name="name">I/O Heavy</field>
+        <field name="code">jobs:io</field>
+        <field name="priority">15</field>
+        <field name="sequence">15</field>
+    </record>
+
+    <record id="async_channel_cpu" model="cb.async.channel">
+        <field name="name">CPU Heavy</field>
+        <field name="code">jobs:cpu</field>
+        <field name="priority">20</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <record id="async_channel_report" model="cb.async.channel">
+        <field name="name">Reports / Export</field>
+        <field name="code">jobs:report</field>
+        <field name="priority">25</field>
+        <field name="sequence">25</field>
+    </record>
+
+</odoo>

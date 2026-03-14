@@ -1,0 +1,70 @@
+# Paket utama yang dibutuhkan
+openupgradelib
+pyyaml 
+ua-parser 
+user-agents
+redis
+
+#OCA
+python-dateutil
+
+#Backup
+dropbox
+pyncclient
+nextcloud-api-wrapper
+boto3
+paramiko
+
+#Cybrosys Accounting
+# openpyxl
+# ofxparse
+# qifparse
+
+# IZI dashboard
+#sqlparse>=0.4.2
+#xlsxwriter
+#requests
+#pandas
+
+# from IZI
+# xlrd==2.0.1
+# from Odoo CE
+# xlrd==1.2.0 ; python_version < '3.12'  # (jammy)
+# xlrd==2.0.1 ; python_version >= '3.12'
+# bs4
+# mysql-connector-python==8.0.22 ; python_version <= '3.5.6'
+# mysql-connector-python==8.0.28 ; python_version > '3.5.6'
+# pymssql
+# statsmodels
+# gspread==6.1.2
+# google-auth==2.29.0
+# google-auth-oauthlib==1.2.0
+# oauth2client==4.1.3
+# matplotlib
+
+
+# Ninja dashboard
+#xlrd==2.0.1
+#openpyxl == 3.1.2
+#gTTS == 2.5.1
+#pandas==2.1.2
+#SQLAlchemy==2.0.32
+
+# Paket lainnya yang dibutuhkan
+# packaging
+
+# # Dependensi umum Odoo
+# psycopg2-binary  # PostgreSQL driver untuk Odoo
+# pillow  # Manipulasi gambar (dibutuhkan untuk laporan & media)
+# pdf2image  # Konversi PDF ke gambar (jika dibutuhkan dalam laporan)
+# pyopenssl  # SSL/TLS security module
+# cryptography  # Keamanan tambahan untuk komunikasi terenkripsi
+# lxml  # Parsing XML (sering digunakan di modul Odoo)
+# num2words  # Konversi angka ke teks (berguna untuk cetak faktur)
+# werkzeug  # Dependency framework Odoo
+
+# # Paket tambahan untuk keamanan dan debugging
+# requests  # HTTP requests untuk integrasi API
+# pyjwt  # JSON Web Token untuk autentikasi API
+# bcrypt  # Modul hashing password yang lebih aman
+# pytz  # Manajemen zona waktu dalam aplikasi Odoo

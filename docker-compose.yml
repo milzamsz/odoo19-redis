@@ -1,0 +1,86 @@
+services:
+  redis:
+    image: redis:8-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    expose:
+      - "6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  odoo-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - redis
+    entrypoint:
+      - /usr/local/bin/cb-redis-dokploy-entrypoint
+    command:
+      - odoo
+      - -c
+      - /tmp/odoo-dokploy.conf
+      - -d
+      - ${ODOO_DB_NAME:-odoo_prod}
+    environment:
+      ODOO_ADMIN_PASSWORD: ${ODOO_ADMIN_PASSWORD:-change-me-admin}
+      ODOO_DB_HOST: ${ODOO_DB_HOST:-your-postgres-host}
+      ODOO_DB_PORT: ${ODOO_DB_PORT:-5432}
+      ODOO_DB_USER: ${ODOO_DB_USER:-odoo}
+      ODOO_DB_PASSWORD: ${ODOO_DB_PASSWORD:-change-me-db-password}
+      ODOO_PROXY_MODE: ${ODOO_PROXY_MODE:-True}
+      ODOO_LIST_DB: ${ODOO_LIST_DB:-False}
+    volumes:
+      - odoo_data:/var/lib/odoo
+      - log_odoo:/var/log/odoo
+      - extra_addons:/mnt/extra-addons
+      - etc_odoo:/etc/odoo
+    ports:
+      - "${ODOO_HTTP_PORT:-8069}:8069"
+
+  cb-redis-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - redis
+    entrypoint:
+      - /usr/local/bin/cb-redis-dokploy-entrypoint
+    command:
+      - python3
+      - /mnt/addons/custom/cb_redis/worker.py
+      - --config
+      - /tmp/odoo-dokploy.conf
+      - --database
+      - ${ODOO_DB_NAME:-odoo_prod}
+      - --batch
+      - "10"
+      - --block
+      - "5000"
+    environment:
+      ODOO_ADMIN_PASSWORD: ${ODOO_ADMIN_PASSWORD:-change-me-admin}
+      ODOO_DB_HOST: ${ODOO_DB_HOST:-your-postgres-host}
+      ODOO_DB_PORT: ${ODOO_DB_PORT:-5432}
+      ODOO_DB_USER: ${ODOO_DB_USER:-odoo}
+      ODOO_DB_PASSWORD: ${ODOO_DB_PASSWORD:-change-me-db-password}
+      ODOO_PROXY_MODE: ${ODOO_PROXY_MODE:-True}
+      ODOO_LIST_DB: ${ODOO_LIST_DB:-False}
+      WORKER_NAME: ${WORKER_NAME:-cb-redis-worker-1}
+      RECLAIM_INTERVAL: ${RECLAIM_INTERVAL:-30}
+      RECLAIM_IDLE_MS: ${RECLAIM_IDLE_MS:-60000}
+    volumes:
+      - odoo_data:/var/lib/odoo
+
+volumes:
+  redis_data:
+  odoo_data:
+  log_odoo:
+  extra_addons:
+  etc_odoo:
